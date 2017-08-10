@@ -38,17 +38,17 @@
 (defface quiz-question-number-face
   '((t :weight bold))
   "Face for the question number."
-  :group :quiz)
+  :group 'quiz)
 
 (defface quiz-question-face
   '((t :weight bold))
   "Face for the question."
-  :group :quiz)
+  :group 'quiz)
 
 (defface quiz-answer-face
   '((t :weight bold))
   "Face for an answer."
-  :group :quiz)
+  :group 'quiz)
 
 (defconst quiz-source-url "https://opentdb.com/api.php?amount=%d"
   "URL for loading up questions from the Open Trivia DB.")
