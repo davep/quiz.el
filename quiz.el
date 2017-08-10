@@ -45,6 +45,11 @@
   "Face for the question."
   :group :quiz)
 
+(defface quiz-answer-face
+  '((t :weight bold))
+  "Face for an answer."
+  :group :quiz)
+
 (defconst quiz-source-url "https://opentdb.com/api.php?amount=%d"
   "URL for loading up questions from the Open Trivia DB.")
 
@@ -86,12 +91,17 @@ Ten questions are loaded if COUNT isn't supplied."
                          (cl-loop for wrong across (cdr (assoc 'incorrect_answers q))
                                   collect (quiz-unhtml wrong))) #'string<)
            concat "\t"
-           concat answer
+           concat (propertize answer 'font-lock-face 'quiz-answer-face)
            concat "\n"))
 
 (defun quiz--answers-boolean (q)
   "Return the answers for Q formatted as a true/false question."
-  "\tTrue\n\tFalse\n")
+  (concat
+   "\t"
+   (propertize "True" 'font-lock-face 'quiz-answer-face)
+   "\n\t"
+   (propertize "True" 'font-lock-face 'quiz-answer-face)
+   "\n"))
 
 (defun quiz--answers (q)
   "Return the formatted answers for question Q."
