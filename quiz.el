@@ -31,6 +31,15 @@
 (require 'json)
 (require 'xml)
 
+(defgroup quiz nil
+  "Trivia quiz game using Open Trivia DB as the backend."
+  :group 'games)
+
+(defface quiz-question-number-face
+  '((t :weight bold))
+  "Face for the question number."
+  :group :quiz)
+
 (defconst quiz-source-url "https://opentdb.com/api.php?amount=%d"
   "URL for loading up questions from the Open Trivia DB.")
 
@@ -96,7 +105,7 @@ Ten questions are loaded if COUNT isn't supplied."
         (cl-loop for i from 1 to (length questions)
                  and q across questions
                  do (insert
-                     (format "Question %s:\n" i)
+                     (propertize (format "Question %s:\n" i) 'font-lock-face 'quiz-question-number-face)
                      (quiz--question q)
                      "\n"
                      (quiz--answers q)
@@ -111,6 +120,7 @@ Ten questions are loaded if COUNT isn't supplied."
       (let ((buffer (get-buffer-create "*Quiz*")))
         (with-current-buffer buffer
           (setf (buffer-string) "")
+          (font-lock-mode)
           (quiz-insert-questions count))
         (switch-to-buffer buffer))
     (error "Between 1 and 50 questions would seem sensible")))
