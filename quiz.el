@@ -40,6 +40,11 @@
   "Face for the question number."
   :group :quiz)
 
+(defface quiz-question-face
+  '((t :weight bold))
+  "Face for the question."
+  :group :quiz)
+
 (defconst quiz-source-url "https://opentdb.com/api.php?amount=%d"
   "URL for loading up questions from the Open Trivia DB.")
 
@@ -72,7 +77,7 @@ Ten questions are loaded if COUNT isn't supplied."
 
 (defun quiz--question (q)
   "Return the question text for question Q."
-  (quiz-unhtml (cdr (assoc 'question q))))
+  (propertize (quiz-unhtml (cdr (assoc 'question q))) 'font-lock-face 'quiz-question-face))
 
 (defun quiz--answers-multiple (q)
   "Return the answers for Q formatted as a multiple choice question."
