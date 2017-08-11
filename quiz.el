@@ -76,56 +76,64 @@ Ten questions are loaded if COUNT isn't supplied."
   "Decode S."
   (decode-coding-string (base64-decode-string s) 'utf-8))
 
-(defun quiz-insert-question-text (q)
-  "Insert the question text for question Q."
-  (insert (propertize (quiz-decode (alist-get 'question q)) 'font-lock-face 'quiz-question-face)))
+(defun quiz-insert-question-text (questions i)
+  "From QUESTIONS insert the text of question I."
+  (insert
+   (propertize
+    (quiz-decode (alist-get 'question (aref questions i)))
+    'font-lock-face 'quiz-question-face)))
 
-(defun quiz-insert-multiple-answers (q)
-  "Insert the answers for Q formatted as a multiple choice question."
-  (let ((correct (quiz-decode (alist-get 'correct_answer q))))
+(defun quiz-insert-multiple-answers (questions i)
+  "From QUESTIONS insert the answers for question I."
+  (let ((correct (quiz-decode (alist-get 'correct_answer (aref questions i)))))
     (apply #'widget-create
            'radio-button-choice
+           :notify (lambda (widget &rest _)
+                     (setf (alist-get 'given_answer (aref questions i))
+                           (base64-encode-string (widget-value widget))))
            (cl-loop for answer in
                     (sort (append (list correct)
-                                  (cl-loop for wrong across (alist-get 'incorrect_answers q)
+                                  (cl-loop for wrong across (alist-get 'incorrect_answers (aref questions i))
                                            collect (quiz-decode wrong))) #'string<)
                     collect (list 'item answer)))))
 
-(defun quiz-insert-boolean-answers (q)
-  "Return the answers for Q formatted as a true/false question."
-  (ignore q)                            ; For now
+(defun quiz-insert-boolean-answers (questions i)
+  "From QUESTIONS insert the answers for question I."
   (widget-create 'radio-button-choice
+                 :notify (lambda (widget &rest _)
+                           (setf (alist-get 'given_answer (aref questions i))
+                                 (base64-encode-string (widget-value widget))))
                  '(item "True")
                  '(item "False")))
 
-(defun quiz-insert-answers (q)
-  "Insert the formatted answers for question Q."
-  (let ((type (quiz-decode (alist-get 'type q))))
+(defun quiz-insert-answers (questions i)
+  "From QUESTIONS insert the answers for question I."
+  (let ((type (quiz-decode (alist-get 'type (aref questions i)))))
     (when type
       (cl-case (intern (concat ":" type))
         (:multiple
-         (quiz-insert-multiple-answers q))
+         (quiz-insert-multiple-answers questions i))
         (:boolean
-         (quiz-insert-boolean-answers q))))))
+         (quiz-insert-boolean-answers questions i))))))
 
-(defun quiz-insert-question (question i)
-  "Insert QUESTION as question number I."
+(defun quiz-insert-question (questions i)
+  "From QUESTIONS insert QUESTION I."
   (insert
-   (propertize (format "Question %s:\n" i) 'font-lock-face 'quiz-question-number-face)
+   (propertize (format "Question %s:\n" (1+ i)) 'font-lock-face 'quiz-question-number-face)
    "\n")
-  (quiz-insert-question-text question)
+  (quiz-insert-question-text questions i)
   (insert "\n")
-  (quiz-insert-answers question)
+  (quiz-insert-answers questions i)
   (insert "\n"))
 
 (defun quiz-insert-questions (count)
   "Get and insert COUNT questions into the current buffer."
   (let ((questions (quiz-get-questions count)))
     (if questions
-        (cl-loop for i from 1 to (length questions)
-                 and q across questions
-                 do (quiz-insert-question q i))
-      (insert "Sorry. Unable to load up any questions right now."))))
+        (cl-loop for i from 0 to (1- (length questions))
+                 do (quiz-insert-question questions i))
+      (insert "Sorry. Unable to load up any questions right now."))
+    questions))
 
 
 (defun quiz-goto-first ()
@@ -173,6 +181,9 @@ The key bindings for `quiz-mode' are:
         truncate-lines   t)
   (buffer-disable-undo))
 
+(defvar-local quiz-questions nil
+  "Holds the questions for the current quiz.")
+
 ;;;###autoload
 (defun quiz (count)
   "Play a multiple choice trivia quiz with COUNT questions."
@@ -183,7 +194,7 @@ The key bindings for `quiz-mode' are:
           (quiz-mode)
           (let ((buffer-read-only nil))
             (setf (buffer-string) "")
-            (quiz-insert-questions count)
+            (setq quiz-questions (quiz-insert-questions count))
             (quiz-goto-first))
           (switch-to-buffer buffer)))
     (error "Between 1 and 50 questions would seem sensible")))
