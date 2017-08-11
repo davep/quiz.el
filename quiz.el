@@ -83,49 +83,50 @@ Ten questions are loaded if COUNT isn't supplied."
         (when (search-forward-regexp "^$" nil t)
           (quiz-lispify-questions (buffer-substring (1+ (point)) (point-max))))))))
 
-(defun quiz-question (q)
-  "Return the question text for question Q."
-  (propertize (quiz-unhtml (cdr (assoc 'question q))) 'font-lock-face 'quiz-question-face))
+(defun quiz-insert-question-text (q)
+  "Insert the question text for question Q."
+  (insert (propertize (quiz-unhtml (cdr (assoc 'question q))) 'font-lock-face 'quiz-question-face)))
 
-(defun quiz-answers-multiple (q)
-  "Return the answers for Q formatted as a multiple choice question."
-  (cl-loop for answer in
-           (sort (append (list (quiz-unhtml (cdr (assoc 'correct_answer q))))
-                         (cl-loop for wrong across (cdr (assoc 'incorrect_answers q))
-                                  collect (quiz-unhtml wrong))) #'string<)
-           concat "\t"
-           concat (propertize answer 'font-lock-face 'quiz-answer-face)
-           concat "\n"))
+(defun quiz-insert-multiple-answers (q)
+  "Insert the answers for Q formatted as a multiple choice question."
+  (insert
+   (cl-loop for answer in
+            (sort (append (list (quiz-unhtml (cdr (assoc 'correct_answer q))))
+                          (cl-loop for wrong across (cdr (assoc 'incorrect_answers q))
+                                   collect (quiz-unhtml wrong))) #'string<)
+            concat "\t"
+            concat (propertize answer 'font-lock-face 'quiz-answer-face)
+            concat "\n")))
 
-(defun quiz-answers-boolean (q)
+(defun quiz-insert-boolean-answers (q)
   "Return the answers for Q formatted as a true/false question."
   (ignore q)                            ; For now
-  (concat
+  (insert
    "\t"
    (propertize "True" 'font-lock-face 'quiz-answer-face)
    "\n\t"
    (propertize "False" 'font-lock-face 'quiz-answer-face)
    "\n"))
 
-(defun quiz-answers (q)
-  "Return the formatted answers for question Q."
+(defun quiz-insert-answers (q)
+  "Insert the formatted answers for question Q."
   (let ((type (cdr (assoc 'type q))))
     (when type
       (cl-case (intern (concat ":" type))
         (:multiple
-         (quiz-answers-multiple q))
+         (quiz-insert-multiple-answers q))
         (:boolean
-         (quiz-answers-boolean q))))))
+         (quiz-insert-boolean-answers q))))))
 
 (defun quiz-insert-question (question i)
   "Insert QUESTION as question number I."
   (insert
    (propertize (format "Question %s:\n" i) 'font-lock-face 'quiz-question-number-face)
-   "\n"
-   (quiz-question question)
-   "\n"
-   (quiz-answers question)
-   "\n"))
+   "\n")
+  (quiz-insert-question-text question)
+  (insert "\n")
+  (quiz-insert-answers question)
+  (insert "\n"))
 
 (defun quiz-insert-questions (count)
   "Get and insert COUNT questions into the current buffer."
@@ -142,6 +143,12 @@ Ten questions are loaded if COUNT isn't supplied."
   (interactive)
   (setf (point) (point-min)))
 
+(defun quiz-goto-next ()
+  "Go to the next question"
+  (interactive)
+  ;; TODO: Make this a lot smarter
+  (re-search-forward "^Question " nil t))
+
 (defun quiz-quit ()
   "Quit the current quiz."
   (interactive)
@@ -153,8 +160,9 @@ Ten questions are loaded if COUNT isn't supplied."
 (unless quiz-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map t)
-    (define-key map "q" #'quiz-quit)
-    (define-key map "?" #'describe-mode)
+    (define-key map [tab] #'quiz-goto-next)
+    (define-key map "q"   #'quiz-quit)
+    (define-key map "?"   #'describe-mode)
     (setq quiz-mode-map map)))
 
 (put 'quiz-mode 'mode-class 'special)
