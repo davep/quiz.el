@@ -30,7 +30,6 @@
 (require 'cl-lib)
 (require 'url-vars)
 (require 'json)
-(require 'xml)
 
 (defgroup quiz nil
   "Trivia quiz game using Open Trivia DB as the back end."
@@ -53,7 +52,7 @@
   "Face for an answer."
   :group 'quiz)
 
-(defconst quiz-source-url "https://opentdb.com/api.php?amount=%d"
+(defconst quiz-source-url "https://opentdb.com/api.php?amount=%d&&encode=base64"
   "URL for loading up questions from the Open Trivia DB.")
 
 (defconst quiz-user-agent "quiz.el"
@@ -62,13 +61,6 @@
 (defun quiz-lispify-questions (json-questions)
   "Turn JSON-QUESTIONS into a list."
   (cdr (assoc 'results (json-read-from-string json-questions))))
-
-(defun quiz-unhtml (s)
-  "Un-HTML S."
-  (with-temp-buffer
-    (insert s)
-    (setf (point) (point-min))
-    (xml-parse-string)))
 
 (defun quiz-get-questions (&optional count)
   "Load COUNT questions from the trivia server.
@@ -83,17 +75,21 @@ Ten questions are loaded if COUNT isn't supplied."
         (when (search-forward-regexp "^$" nil t)
           (quiz-lispify-questions (buffer-substring (1+ (point)) (point-max))))))))
 
+(defun quiz-decode (s)
+  "Decode S."
+  (base64-decode-string s))
+
 (defun quiz-insert-question-text (q)
   "Insert the question text for question Q."
-  (insert (propertize (quiz-unhtml (cdr (assoc 'question q))) 'font-lock-face 'quiz-question-face)))
+  (insert (propertize (quiz-decode (cdr (assoc 'question q))) 'font-lock-face 'quiz-question-face)))
 
 (defun quiz-insert-multiple-answers (q)
   "Insert the answers for Q formatted as a multiple choice question."
   (insert
    (cl-loop for answer in
-            (sort (append (list (quiz-unhtml (cdr (assoc 'correct_answer q))))
+            (sort (append (list (quiz-decode (cdr (assoc 'correct_answer q))))
                           (cl-loop for wrong across (cdr (assoc 'incorrect_answers q))
-                                   collect (quiz-unhtml wrong))) #'string<)
+                                   collect (quiz-decode wrong))) #'string<)
             concat "\t"
             concat (propertize answer 'font-lock-face 'quiz-answer-face)
             concat "\n")))
@@ -110,7 +106,7 @@ Ten questions are loaded if COUNT isn't supplied."
 
 (defun quiz-insert-answers (q)
   "Insert the formatted answers for question Q."
-  (let ((type (cdr (assoc 'type q))))
+  (let ((type (quiz-decode (cdr (assoc 'type q)))))
     (when type
       (cl-case (intern (concat ":" type))
         (:multiple
