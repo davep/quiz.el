@@ -134,6 +134,38 @@ Ten questions are loaded if COUNT isn't supplied."
                  do (quiz-insert-question q i))
       (insert "Sorry. Unable to load up any questions right now."))))
 
+
+(defun quiz-quit ()
+  "Quit the current quiz."
+  (interactive)
+  (kill-buffer))
+
+(defvar quiz-mode-map nil
+  "Local keymap for `quiz'.")
+
+(unless quiz-mode-map
+  (let ((map (make-sparse-keymap)))
+    (suppress-keymap map t)
+    (define-key map "q" #'quiz-quit)
+    (define-key map "?" #'describe-mode)
+    (setq quiz-mode-map map)))
+
+(put 'quiz-mode 'mode-class 'special)
+
+(defun quiz-mode ()
+  "Major mode for playing `quiz'.
+
+The key bindings for `quiz-mode' are:
+
+\\{quiz-mode-map}"
+  (kill-all-local-variables)
+  (use-local-map quiz-mode-map)
+  (setq major-mode 'quiz-mode
+        mode-name  "Quiz mode"
+        buffer-read-only t
+        truncate-lines   t)
+  (buffer-disable-undo))
+
 ;;;###autoload
 (defun quiz (count)
   "Play a multiple choice trivia quiz with COUNT questions."
@@ -143,7 +175,8 @@ Ten questions are loaded if COUNT isn't supplied."
         (with-current-buffer buffer
           (setf (buffer-string) "")
           (font-lock-mode)
-          (quiz-insert-questions count))
+          (quiz-insert-questions count)
+          (quiz-mode))
         (switch-to-buffer buffer))
     (error "Between 1 and 50 questions would seem sensible")))
 
