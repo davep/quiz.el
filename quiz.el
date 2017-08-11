@@ -77,7 +77,7 @@ Ten questions are loaded if COUNT isn't supplied."
 
 (defun quiz-decode (s)
   "Decode S."
-  (base64-decode-string s))
+  (decode-coding-string (base64-decode-string s) 'utf-8))
 
 (defun quiz-insert-question-text (q)
   "Insert the question text for question Q."
@@ -137,7 +137,8 @@ Ten questions are loaded if COUNT isn't supplied."
 (defun quiz-goto-first ()
   "Go to the first question."
   (interactive)
-  (setf (point) (point-min)))
+  (setf (point) (point-min))
+  (quiz-goto-next))
 
 (defun quiz-goto-next ()
   "Go to the next question."
