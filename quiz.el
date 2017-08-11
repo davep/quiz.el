@@ -100,7 +100,7 @@ Ten questions are loaded if COUNT isn't supplied."
    "\t"
    (propertize "True" 'font-lock-face 'quiz-answer-face)
    "\n\t"
-   (propertize "True" 'font-lock-face 'quiz-answer-face)
+   (propertize "False" 'font-lock-face 'quiz-answer-face)
    "\n"))
 
 (defun quiz--answers (q)
