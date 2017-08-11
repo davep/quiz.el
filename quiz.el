@@ -30,6 +30,7 @@
 (require 'cl-lib)
 (require 'url-vars)
 (require 'json)
+(require 'wid-edit)
 
 (defgroup quiz nil
   "Trivia quiz game using Open Trivia DB as the back end."
@@ -85,24 +86,26 @@ Ten questions are loaded if COUNT isn't supplied."
 
 (defun quiz-insert-multiple-answers (q)
   "Insert the answers for Q formatted as a multiple choice question."
-  (insert
-   (cl-loop for answer in
-            (sort (append (list (quiz-decode (cdr (assoc 'correct_answer q))))
-                          (cl-loop for wrong across (cdr (assoc 'incorrect_answers q))
-                                   collect (quiz-decode wrong))) #'string<)
-            concat "\t"
-            concat (propertize answer 'font-lock-face 'quiz-answer-face)
-            concat "\n")))
+  (apply #'widget-create
+         'radio-button-choice
+         :notify (lambda (widget &rest _)
+                   (message "You selected %s"
+                            (widget-value widget)))
+         (cl-loop for answer in
+                  (sort (append (list (quiz-decode (cdr (assoc 'correct_answer q))))
+                                (cl-loop for wrong across (cdr (assoc 'incorrect_answers q))
+                                         collect (quiz-decode wrong))) #'string<)
+                  collect (list 'item answer))))
 
 (defun quiz-insert-boolean-answers (q)
   "Return the answers for Q formatted as a true/false question."
   (ignore q)                            ; For now
-  (insert
-   "\t"
-   (propertize "True" 'font-lock-face 'quiz-answer-face)
-   "\n\t"
-   (propertize "False" 'font-lock-face 'quiz-answer-face)
-   "\n"))
+  (widget-create 'radio-button-choice
+                 :notify (lambda (widget &rest _)
+                           (message "You selected %s"
+                                    (widget-value widget)))
+                 '(item "True")
+                 '(item "False")))
 
 (defun quiz-insert-answers (q)
   "Insert the formatted answers for question Q."
@@ -157,9 +160,8 @@ Ten questions are loaded if COUNT isn't supplied."
   "Local keymap for `quiz'.")
 
 (unless quiz-mode-map
-  (let ((map (make-sparse-keymap)))
+  (let ((map widget-keymap))
     (suppress-keymap map t)
-    (define-key map [tab] #'quiz-goto-next)
     (define-key map "q"   #'quiz-quit)
     (define-key map "?"   #'describe-mode)
     (setq quiz-mode-map map)))
@@ -187,12 +189,11 @@ The key bindings for `quiz-mode' are:
   (if (> 51 count 0)
       (let ((buffer (get-buffer-create "*Quiz*")))
         (with-current-buffer buffer
-          (save-excursion
-            (let ((buffer-read-only nil))
-              (setf (buffer-string) "")
-              (quiz-insert-questions count)
-              (quiz-mode)
-              (quiz-goto-first)))
+          (quiz-mode)
+          (let ((buffer-read-only nil))
+            (setf (buffer-string) "")
+            (quiz-insert-questions count)
+            (quiz-goto-first))
           (switch-to-buffer buffer)))
     (error "Between 1 and 50 questions would seem sensible")))
 
