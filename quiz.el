@@ -30,6 +30,7 @@
 (require 'cl-lib)
 (require 'url-vars)
 (require 'json)
+(require 'widget)
 (require 'wid-edit)
 
 (defgroup quiz nil
