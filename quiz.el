@@ -126,7 +126,6 @@ Ten questions are loaded if COUNT isn't supplied."
    'action (lambda (_) (quiz-check-answers))
    :follow-link t))
 
-
 (defun quiz-check-answers ()
   "Show the results of the quiz."
   (interactive)
