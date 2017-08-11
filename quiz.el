@@ -144,7 +144,7 @@ Ten questions are loaded if COUNT isn't supplied."
   (setf (point) (point-min)))
 
 (defun quiz-goto-next ()
-  "Go to the next question"
+  "Go to the next question."
   (interactive)
   ;; TODO: Make this a lot smarter
   (re-search-forward "^Question " nil t))
