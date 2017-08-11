@@ -89,18 +89,20 @@ Ten questions are loaded if COUNT isn't supplied."
 
 (defun quiz-insert-answers (questions i)
   "From QUESTIONS insert the answers for question I."
-  (let ((correct (quiz-decode (alist-get 'correct_answer (aref questions i)))))
+  (let ((q (aref questions i)))
     (insert "  ")
     (apply #'widget-create
            'radio-button-choice
            :indent 2
            :notify (lambda (widget &rest _)
-                     (setf (alist-get 'given_answer (aref questions i))
+                     (setf (alist-get 'given_answer q)
                            (base64-encode-string (widget-value widget))))
            (cl-loop for answer in
-                    (sort (append (list correct)
-                                  (cl-loop for wrong across (alist-get 'incorrect_answers (aref questions i))
-                                           collect (quiz-decode wrong))) #'string<)
+                    (sort
+                     (append (list (quiz-decode (alist-get 'correct_answer q)))
+                             (cl-loop for wrong across (alist-get 'incorrect_answers q)
+                                      collect (quiz-decode wrong)))
+                     #'string<)
                     collect (list 'item answer)))))
 
 (defun quiz-insert-question (questions i)
