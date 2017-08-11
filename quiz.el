@@ -55,6 +55,9 @@
 (defconst quiz-user-agent "quiz.el"
   "User agent to send when requesting number information.")
 
+(defconst quiz-buffer-name "*Quiz*"
+  "Name of the quiz buffer.")
+
 (defun quiz-lispify-questions (json-questions)
   "Turn JSON-QUESTIONS into a list."
   (alist-get 'results (json-read-from-string json-questions)))
@@ -184,7 +187,7 @@ The key bindings for `quiz-mode' are:
   (setq major-mode       'quiz-mode
         mode-name        "Quiz mode"
         buffer-read-only t
-        truncate-lines   t)
+        truncate-lines   nil)
   (buffer-disable-undo))
 
 (defvar-local quiz-questions nil
@@ -194,17 +197,19 @@ The key bindings for `quiz-mode' are:
 (defun quiz (count)
   "Play a multiple choice trivia quiz with COUNT questions."
   (interactive (list (read-number "Questions: " 10)))
-  (if (> 51 count 0)
-      (let ((buffer (get-buffer-create "*Quiz*")))
-        (with-current-buffer buffer
-          (quiz-mode)
-          (let ((buffer-read-only nil))
-            (setf (buffer-string) "")
-            (save-excursion
-              (setq quiz-questions (quiz-insert-questions count))
-              (quiz-insert-finish)))
-          (switch-to-buffer buffer)))
-    (error "Between 1 and 50 questions would seem sensible")))
+  (if (< 51 count 0)
+      (error "Between 1 and 50 questions would seem sensible")
+    (when (get-buffer quiz-buffer-name)
+      (kill-buffer quiz-buffer-name))
+    (let ((buffer (get-buffer-create quiz-buffer-name)))
+      (with-current-buffer buffer
+        (quiz-mode)
+        (let ((buffer-read-only nil))
+          (setf (buffer-string) "")
+          (save-excursion
+            (setq quiz-questions (quiz-insert-questions count))
+            (quiz-insert-finish)))
+        (switch-to-buffer buffer)))))
 
 (provide 'quiz)
 
