@@ -145,8 +145,7 @@ Ten questions are loaded if COUNT isn't supplied."
   ;; TODO: Make this a lot smarter
   (when (re-search-forward "^Question " nil t)
     (setf (point) (point-at-bol))
-    (next-line)
-    (next-line)))
+    (forward-line 2)))
 
 (defun quiz-quit ()
   "Quit the current quiz."
