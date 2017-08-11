@@ -98,6 +98,7 @@ Ten questions are loaded if COUNT isn't supplied."
 
 (defun quiz-answers-boolean (q)
   "Return the answers for Q formatted as a true/false question."
+  (ignore q)                            ; For now
   (concat
    "\t"
    (propertize "True" 'font-lock-face 'quiz-answer-face)
