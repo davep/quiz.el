@@ -171,8 +171,8 @@ The key bindings for `quiz-mode' are:
 \\{quiz-mode-map}"
   (kill-all-local-variables)
   (use-local-map quiz-mode-map)
-  (setq major-mode 'quiz-mode
-        mode-name  "Quiz mode"
+  (setq major-mode       'quiz-mode
+        mode-name        "Quiz mode"
         buffer-read-only t
         truncate-lines   t)
   (buffer-disable-undo))
