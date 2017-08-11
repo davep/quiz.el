@@ -57,7 +57,7 @@
 
 (defun quiz-lispify-questions (json-questions)
   "Turn JSON-QUESTIONS into a list."
-  (cdr (assoc 'results (json-read-from-string json-questions))))
+  (alist-get 'results (json-read-from-string json-questions)))
 
 (defun quiz-get-questions (&optional count)
   "Load COUNT questions from the trivia server.
@@ -78,34 +78,29 @@ Ten questions are loaded if COUNT isn't supplied."
 
 (defun quiz-insert-question-text (q)
   "Insert the question text for question Q."
-  (insert (propertize (quiz-decode (cdr (assoc 'question q))) 'font-lock-face 'quiz-question-face)))
+  (insert (propertize (quiz-decode (alist-get 'question q)) 'font-lock-face 'quiz-question-face)))
 
 (defun quiz-insert-multiple-answers (q)
   "Insert the answers for Q formatted as a multiple choice question."
-  (apply #'widget-create
-         'radio-button-choice
-         :notify (lambda (widget &rest _)
-                   (message "You selected %s"
-                            (widget-value widget)))
-         (cl-loop for answer in
-                  (sort (append (list (quiz-decode (cdr (assoc 'correct_answer q))))
-                                (cl-loop for wrong across (cdr (assoc 'incorrect_answers q))
-                                         collect (quiz-decode wrong))) #'string<)
-                  collect (list 'item answer))))
+  (let ((correct (quiz-decode (alist-get 'correct_answer q))))
+    (apply #'widget-create
+           'radio-button-choice
+           (cl-loop for answer in
+                    (sort (append (list correct)
+                                  (cl-loop for wrong across (alist-get 'incorrect_answers q)
+                                           collect (quiz-decode wrong))) #'string<)
+                    collect (list 'item answer)))))
 
 (defun quiz-insert-boolean-answers (q)
   "Return the answers for Q formatted as a true/false question."
   (ignore q)                            ; For now
   (widget-create 'radio-button-choice
-                 :notify (lambda (widget &rest _)
-                           (message "You selected %s"
-                                    (widget-value widget)))
                  '(item "True")
                  '(item "False")))
 
 (defun quiz-insert-answers (q)
   "Insert the formatted answers for question Q."
-  (let ((type (quiz-decode (cdr (assoc 'type q)))))
+  (let ((type (quiz-decode (alist-get 'type q))))
     (when type
       (cl-case (intern (concat ":" type))
         (:multiple
