@@ -82,11 +82,11 @@ Ten questions are loaded if COUNT isn't supplied."
         (when (search-forward-regexp "^$" nil t)
           (quiz-lispify-questions (buffer-substring (1+ (point)) (point-max))))))))
 
-(defun quiz--question (q)
+(defun quiz-question (q)
   "Return the question text for question Q."
   (propertize (quiz-unhtml (cdr (assoc 'question q))) 'font-lock-face 'quiz-question-face))
 
-(defun quiz--answers-multiple (q)
+(defun quiz-answers-multiple (q)
   "Return the answers for Q formatted as a multiple choice question."
   (cl-loop for answer in
            (sort (append (list (quiz-unhtml (cdr (assoc 'correct_answer q))))
@@ -96,7 +96,7 @@ Ten questions are loaded if COUNT isn't supplied."
            concat (propertize answer 'font-lock-face 'quiz-answer-face)
            concat "\n"))
 
-(defun quiz--answers-boolean (q)
+(defun quiz-answers-boolean (q)
   "Return the answers for Q formatted as a true/false question."
   (concat
    "\t"
@@ -105,15 +105,15 @@ Ten questions are loaded if COUNT isn't supplied."
    (propertize "False" 'font-lock-face 'quiz-answer-face)
    "\n"))
 
-(defun quiz--answers (q)
+(defun quiz-answers (q)
   "Return the formatted answers for question Q."
   (let ((type (cdr (assoc 'type q))))
     (when type
       (cl-case (intern (concat ":" type))
         (:multiple
-         (quiz--answers-multiple q))
+         (quiz-answers-multiple q))
         (:boolean
-         (quiz--answers-boolean q))))))
+         (quiz-answers-boolean q))))))
 
 (defun quiz-insert-questions (count)
   "Get and insert COUNT questions into the current buffer."
@@ -123,9 +123,10 @@ Ten questions are loaded if COUNT isn't supplied."
                  and q across questions
                  do (insert
                      (propertize (format "Question %s:\n" i) 'font-lock-face 'quiz-question-number-face)
-                     (quiz--question q)
                      "\n"
-                     (quiz--answers q)
+                     (quiz-question q)
+                     "\n"
+                     (quiz-answers q)
                      "\n"))
       (insert "Sorry. Unable to load up any questions right now."))))
 
