@@ -175,7 +175,6 @@ The key bindings for `quiz-mode' are:
       (let ((buffer (get-buffer-create "*Quiz*")))
         (with-current-buffer buffer
           (setf (buffer-string) "")
-          (font-lock-mode)
           (quiz-insert-questions count)
           (quiz-mode))
         (switch-to-buffer buffer))
