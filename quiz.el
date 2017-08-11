@@ -135,6 +135,13 @@ Ten questions are loaded if COUNT isn't supplied."
       (insert "Sorry. Unable to load up any questions right now."))
     questions))
 
+(defun quiz-insert-finish ()
+  "Insert the finish button for the QUESTIONS."
+  (insert-text-button
+   "Check answers"
+   'action (lambda (_) (quiz-check-answers))
+   :follow-link t))
+
 
 (defun quiz-goto-first ()
   "Go to the first question."
@@ -150,6 +157,18 @@ Ten questions are loaded if COUNT isn't supplied."
     (setf (point) (point-at-bol))
     (forward-line 2)))
 
+(defun quiz-check-answers ()
+  "Show the results of the quiz."
+  (interactive)
+  (message "%d out of %d correct answers."
+           (cl-loop for q across quiz-questions
+                    sum (if (string=
+                             (alist-get 'correct_answer q)
+                             (alist-get 'given_answer q ""))
+                            1
+                          0))
+           (length quiz-questions)))
+
 (defun quiz-quit ()
   "Quit the current quiz."
   (interactive)
@@ -161,6 +180,7 @@ Ten questions are loaded if COUNT isn't supplied."
 (unless quiz-mode-map
   (let ((map widget-keymap))
     (suppress-keymap map t)
+    (define-key map " "   #'quiz-check-answers)
     (define-key map "q"   #'quiz-quit)
     (define-key map "?"   #'describe-mode)
     (setq quiz-mode-map map)))
@@ -195,6 +215,7 @@ The key bindings for `quiz-mode' are:
           (let ((buffer-read-only nil))
             (setf (buffer-string) "")
             (setq quiz-questions (quiz-insert-questions count))
+            (quiz-insert-finish)
             (quiz-goto-first))
           (switch-to-buffer buffer)))
     (error "Between 1 and 50 questions would seem sensible")))
