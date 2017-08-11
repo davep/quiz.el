@@ -49,11 +49,6 @@
   "Face for the question."
   :group 'quiz)
 
-(defface quiz-answer-face
-  '((t :weight normal))
-  "Face for an answer."
-  :group 'quiz)
-
 (defconst quiz-source-url "https://opentdb.com/api.php?amount=%d&&encode=base64"
   "URL for loading up questions from the Open Trivia DB.")
 
