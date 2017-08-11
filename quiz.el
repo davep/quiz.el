@@ -31,7 +31,8 @@
 (require 'url-vars)
 (require 'json)
 (require 'widget)
-(require 'wid-edit)
+(eval-when-compile
+  (require 'wid-edit))
 
 (defgroup quiz nil
   "Trivia quiz game using Open Trivia DB as the back end."
