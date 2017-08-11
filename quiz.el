@@ -86,7 +86,7 @@ Ten questions are loaded if COUNT isn't supplied."
     (quiz-decode (alist-get 'question (aref questions i)))
     'font-lock-face 'quiz-question-face)))
 
-(defun quiz-insert-multiple-answers (questions i)
+(defun quiz-insert-answers (questions i)
   "From QUESTIONS insert the answers for question I."
   (let ((correct (quiz-decode (alist-get 'correct_answer (aref questions i)))))
     (apply #'widget-create
@@ -99,25 +99,6 @@ Ten questions are loaded if COUNT isn't supplied."
                                   (cl-loop for wrong across (alist-get 'incorrect_answers (aref questions i))
                                            collect (quiz-decode wrong))) #'string<)
                     collect (list 'item answer)))))
-
-(defun quiz-insert-boolean-answers (questions i)
-  "From QUESTIONS insert the answers for question I."
-  (widget-create 'radio-button-choice
-                 :notify (lambda (widget &rest _)
-                           (setf (alist-get 'given_answer (aref questions i))
-                                 (base64-encode-string (widget-value widget))))
-                 '(item "True")
-                 '(item "False")))
-
-(defun quiz-insert-answers (questions i)
-  "From QUESTIONS insert the answers for question I."
-  (let ((type (quiz-decode (alist-get 'type (aref questions i)))))
-    (when type
-      (cl-case (intern (concat ":" type))
-        (:multiple
-         (quiz-insert-multiple-answers questions i))
-        (:boolean
-         (quiz-insert-boolean-answers questions i))))))
 
 (defun quiz-insert-question (questions i)
   "From QUESTIONS insert QUESTION I."
