@@ -176,9 +176,10 @@ The key bindings for `quiz-mode' are:
       (let ((buffer (get-buffer-create "*Quiz*")))
         (with-current-buffer buffer
           (save-excursion
-            (setf (buffer-string) "")
-            (quiz-insert-questions count)
-            (quiz-mode))
+            (let ((buffer-read-only nil))
+              (setf (buffer-string) "")
+              (quiz-insert-questions count)
+              (quiz-mode)))
           (switch-to-buffer buffer)))
     (error "Between 1 and 50 questions would seem sensible")))
 
