@@ -36,7 +36,9 @@
   :group 'games)
 
 (defface quiz-question-number-face
-  '((t :weight bold))
+  '((t :height 1.2
+       :background "black"
+       :foreground "white"))
   "Face for the question number."
   :group 'quiz)
 
