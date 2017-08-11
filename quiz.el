@@ -48,7 +48,7 @@
   :group 'quiz)
 
 (defface quiz-answer-face
-  '((t :weight bold))
+  '((t :weight normal))
   "Face for an answer."
   :group 'quiz)
 
@@ -115,19 +115,23 @@ Ten questions are loaded if COUNT isn't supplied."
         (:boolean
          (quiz-answers-boolean q))))))
 
+(defun quiz-insert-question (question i)
+  "Insert QUESTION as question number I."
+  (insert
+   (propertize (format "Question %s:\n" i) 'font-lock-face 'quiz-question-number-face)
+   "\n"
+   (quiz-question question)
+   "\n"
+   (quiz-answers question)
+   "\n"))
+
 (defun quiz-insert-questions (count)
   "Get and insert COUNT questions into the current buffer."
   (let ((questions (quiz-get-questions count)))
     (if questions
         (cl-loop for i from 1 to (length questions)
                  and q across questions
-                 do (insert
-                     (propertize (format "Question %s:\n" i) 'font-lock-face 'quiz-question-number-face)
-                     "\n"
-                     (quiz-question q)
-                     "\n"
-                     (quiz-answers q)
-                     "\n"))
+                 do (quiz-insert-question q i))
       (insert "Sorry. Unable to load up any questions right now."))))
 
 ;;;###autoload
