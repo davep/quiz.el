@@ -27,6 +27,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'url-vars)
 (require 'json)
 (require 'xml)
@@ -174,10 +175,11 @@ The key bindings for `quiz-mode' are:
   (if (> 51 count 0)
       (let ((buffer (get-buffer-create "*Quiz*")))
         (with-current-buffer buffer
-          (setf (buffer-string) "")
-          (quiz-insert-questions count)
-          (quiz-mode))
-        (switch-to-buffer buffer))
+          (save-excursion
+            (setf (buffer-string) "")
+            (quiz-insert-questions count)
+            (quiz-mode))
+          (switch-to-buffer buffer)))
     (error "Between 1 and 50 questions would seem sensible")))
 
 (provide 'quiz)
