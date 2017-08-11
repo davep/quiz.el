@@ -130,7 +130,7 @@ Ten questions are loaded if COUNT isn't supplied."
 ;;;###autoload
 (defun quiz (count)
   "Play a multiple choice trivia quiz with COUNT questions."
-  (interactive "nQuestions: ")
+  (interactive (list (read-number "Questions: " 10)))
   (if (> 51 count 0)
       (let ((buffer (get-buffer-create "*Quiz*")))
         (with-current-buffer buffer
