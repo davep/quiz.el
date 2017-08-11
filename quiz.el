@@ -189,7 +189,8 @@ The key bindings for `quiz-mode' are:
           (setf (buffer-string) "")
           (save-excursion
             (setq quiz-questions (quiz-insert-questions count))
-            (quiz-insert-finish)))
+            (quiz-insert-finish))
+          (widget-forward 1))
         (switch-to-buffer buffer)))))
 
 (provide 'quiz)
