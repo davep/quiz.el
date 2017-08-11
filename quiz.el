@@ -32,7 +32,7 @@
 (require 'xml)
 
 (defgroup quiz nil
-  "Trivia quiz game using Open Trivia DB as the backend."
+  "Trivia quiz game using Open Trivia DB as the back end."
   :group 'games)
 
 (defface quiz-question-number-face
