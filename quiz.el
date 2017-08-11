@@ -137,6 +137,11 @@ Ten questions are loaded if COUNT isn't supplied."
       (insert "Sorry. Unable to load up any questions right now."))))
 
 
+(defun quiz-goto-first ()
+  "Go to the first question."
+  (interactive)
+  (setf (point) (point-min)))
+
 (defun quiz-quit ()
   "Quit the current quiz."
   (interactive)
@@ -179,7 +184,8 @@ The key bindings for `quiz-mode' are:
             (let ((buffer-read-only nil))
               (setf (buffer-string) "")
               (quiz-insert-questions count)
-              (quiz-mode)))
+              (quiz-mode)
+              (quiz-goto-first)))
           (switch-to-buffer buffer)))
     (error "Between 1 and 50 questions would seem sensible")))
 
