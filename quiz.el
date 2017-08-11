@@ -143,20 +143,6 @@ Ten questions are loaded if COUNT isn't supplied."
    :follow-link t))
 
 
-(defun quiz-goto-first ()
-  "Go to the first question."
-  (interactive)
-  (setf (point) (point-min))
-  (quiz-goto-next))
-
-(defun quiz-goto-next ()
-  "Go to the next question."
-  (interactive)
-  ;; TODO: Make this a lot smarter
-  (when (re-search-forward "^Question " nil t)
-    (setf (point) (point-at-bol))
-    (forward-line 2)))
-
 (defun quiz-check-answers ()
   "Show the results of the quiz."
   (interactive)
@@ -214,9 +200,9 @@ The key bindings for `quiz-mode' are:
           (quiz-mode)
           (let ((buffer-read-only nil))
             (setf (buffer-string) "")
-            (setq quiz-questions (quiz-insert-questions count))
-            (quiz-insert-finish)
-            (quiz-goto-first))
+            (save-excursion
+              (setq quiz-questions (quiz-insert-questions count))
+              (quiz-insert-finish)))
           (switch-to-buffer buffer)))
     (error "Between 1 and 50 questions would seem sensible")))
 
