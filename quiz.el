@@ -53,7 +53,7 @@
 (defconst quiz-source-url "https://opentdb.com/api.php?amount=%d&&encode=base64"
   "URL for loading up questions from the Open Trivia DB.")
 
-(defconst quiz-user-agent "quiz.el"
+(defconst quiz-user-agent "quiz.el (https://github.com/davep/quiz.el)"
   "User agent to send when requesting number information.")
 
 (defconst quiz-buffer-name "*Quiz*"
