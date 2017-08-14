@@ -138,6 +138,7 @@ Ten questions are loaded if COUNT isn't supplied."
    "Check answers"
    'action (lambda (_) (quiz-check-answers))
    'face 'quiz-button-face
+   'help-echo "Check how many answers you have correct"
    'follow-link t))
 
 (defun quiz-check-answers ()
