@@ -50,6 +50,14 @@
   "Face for the question."
   :group 'quiz)
 
+(defface quiz-button-face
+  '((((type x w32 ns)
+      (class color))
+     :box (:line-width 2 :style released-button)
+     :background "lightgrey" :foreground "black"))
+  "Face for quiz buttons."
+  :group 'quiz)
+
 (defconst quiz-source-url "https://opentdb.com/api.php?amount=%d&&encode=base64"
   "URL for loading up questions from the Open Trivia DB.")
 
@@ -129,6 +137,7 @@ Ten questions are loaded if COUNT isn't supplied."
   (insert-text-button
    "Check answers"
    'action (lambda (_) (quiz-check-answers))
+   'face 'quiz-button-face
    :follow-link t))
 
 (defun quiz-check-answers ()
