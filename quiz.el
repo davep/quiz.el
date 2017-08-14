@@ -50,7 +50,7 @@
   "Face for the question."
   :group 'quiz)
 
-(defconst quiz-source-url "https://opentdb.com/api.php?amount=%d&&encode=base64"
+(defconst quiz-source-url "https://opentdb.com/api.php?amount=%d&encode=base64"
   "URL for loading up questions from the Open Trivia DB.")
 
 (defconst quiz-user-agent "quiz.el (https://github.com/davep/quiz.el)"
