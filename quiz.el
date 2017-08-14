@@ -129,6 +129,7 @@ Ten questions are loaded if COUNT isn't supplied."
   (widget-create 'push-button
                  :notify (lambda (&rest _)
                            (quiz-check-answers))
+                 :help-echo "Check how many correct answers you have"
                  "Check answers"))
 
 (defun quiz-check-answers ()
