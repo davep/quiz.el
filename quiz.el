@@ -95,7 +95,7 @@ Ten questions are loaded if COUNT isn't supplied."
            'radio-button-choice
            :indent 2
            :notify (lambda (widget &rest _)
-                     (setf (alist-get 'given_answer q)
+                     (setf (alist-get 'given_answer (aref questions i))
                            (base64-encode-string (widget-value widget))))
            (cl-loop for answer in
                     (sort
