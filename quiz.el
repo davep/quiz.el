@@ -5,7 +5,7 @@
 ;; Version: 0.01
 ;; Keywords: games, trivia, quiz
 ;; URL: https://github.com/davep/quiz.el
-;; Package-Requires: ((cl-lib "0.5") (emacs "24"))
+;; Package-Requires: ((cl-lib "0.5") (emacs "25"))
 
 ;; This program is free software: you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by the
