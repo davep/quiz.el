@@ -54,7 +54,7 @@
   "URL for loading up questions from the Open Trivia DB.")
 
 (defconst quiz-user-agent "quiz.el (https://github.com/davep/quiz.el)"
-  "User agent to send when requesting number information.")
+  "User agent to send when requesting a quiz.")
 
 (defconst quiz-buffer-name "*Quiz*"
   "Name of the quiz buffer.")
