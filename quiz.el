@@ -50,8 +50,11 @@
   "Face for the question."
   :group 'quiz)
 
-(defconst quiz-source-url "https://opentdb.com/api.php?amount=%d&encode=base64"
+(defconst quiz-source-url "https://opentdb.com/api.php?amount=%d&encode=base64%s"
   "URL for loading up questions from the Open Trivia DB.")
+
+(defconst quiz-difficulty-levels '("any" "easy" "medium" "hard")
+  "Levels of difficulty of questions.")
 
 (defconst quiz-user-agent "quiz.el (https://github.com/davep/quiz.el)"
   "User agent to send when requesting a quiz.")
@@ -63,12 +66,23 @@
   "Turn JSON-QUESTIONS into a list."
   (alist-get 'results (json-read-from-string json-questions)))
 
-(defun quiz-get-questions (&optional count)
+(defun quiz-difficulty-url-param (difficulty)
+  "Return DIFFICULTY as a parameter for the quiz URL."
+  (if (or (null difficulty) (string= difficulty (car quiz-difficulty-levels)))
+      ""
+    (format "&difficulty=%s" difficulty)))
+
+(defun quiz-get-questions (&optional count difficulty)
   "Load COUNT questions from the trivia server.
 
-Ten questions are loaded if COUNT isn't supplied."
+Ten questions are loaded if COUNT isn't supplied.
+
+DIFFICULTY can be used top optionally set the difficulty of the questions."
   (let* ((url-request-extra-headers `(("User-Agent" . ,quiz-user-agent)))
-         (buffer (url-retrieve-synchronously (format quiz-source-url (or count 10)))))
+         (buffer (url-retrieve-synchronously
+                  (format quiz-source-url
+                          (or count 10)
+                          (quiz-difficulty-url-param difficulty)))))
     (when buffer
       (with-current-buffer buffer
         (set-buffer-multibyte t)
@@ -115,9 +129,11 @@ Ten questions are loaded if COUNT isn't supplied."
   (quiz-insert-answers questions i)
   (insert "\n"))
 
-(defun quiz-insert-questions (count)
-  "Get and insert COUNT questions into the current buffer."
-  (let ((questions (quiz-get-questions count)))
+(defun quiz-insert-questions (count difficulty)
+  "Get and insert COUNT questions into the current buffer.
+
+Questions will be at most as hard as DIFFICULTY."
+  (let ((questions (quiz-get-questions count difficulty)))
     (if questions
         (cl-loop for i from 0 to (1- (length questions))
                  do (quiz-insert-question questions i))
@@ -180,9 +196,16 @@ The key bindings for `quiz-mode' are:
   "Holds the questions for the current quiz.")
 
 ;;;###autoload
-(defun quiz (count)
-  "Play a multiple choice trivia quiz with COUNT questions."
-  (interactive (list (read-number "Questions: " 10)))
+(defun quiz (count difficulty)
+  "Play a multiple choice trivia quiz with COUNT questions.
+
+Questions will be at most as hard as DIFFICULTY."
+  (interactive
+   (list
+    (read-number "Questions: " 10)
+    (completing-read
+     (format "Difficulty (default %s): " (car quiz-difficulty-levels))
+     quiz-difficulty-levels nil t nil nil (car quiz-difficulty-levels))))
   (if (< 51 count 0)
       (error "Between 1 and 50 questions would seem sensible")
     (when (get-buffer quiz-buffer-name)
@@ -193,7 +216,7 @@ The key bindings for `quiz-mode' are:
         (let ((buffer-read-only nil))
           (setf (buffer-string) "")
           (save-excursion
-            (setq quiz-questions (quiz-insert-questions count))
+            (setq quiz-questions (quiz-insert-questions count difficulty))
             (quiz-insert-finish))
           (widget-forward 1))
         (switch-to-buffer buffer)))))
