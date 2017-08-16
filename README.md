@@ -17,6 +17,6 @@ any time to check your progress.
 ## Todo:
 
 - [ ] Implement categories.
-- [ ] Implement difficulty levels.
+- [X] Implement difficulty levels.
 - [ ] Implement session IDs to have fewer repeat questions.
 - [ ] Implement question type selection.
