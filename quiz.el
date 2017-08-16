@@ -241,6 +241,8 @@ The key bindings for `quiz-mode' are:
 (defun quiz (count category difficulty)
   "Play a multiple choice trivia quiz with COUNT questions.
 
+If non-blank, questions from only CATEGORY will be asked.
+
 Questions will be at most as hard as DIFFICULTY."
   (interactive
    (list
