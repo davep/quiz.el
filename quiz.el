@@ -193,7 +193,7 @@ Questions will be at most as hard as DIFFICULTY."
 (defun quiz-check-answers ()
   "Show the results of the quiz."
   (interactive)
-  (message "%d out of %d correct answers."
+  (message "%d out of %d questions answered correctly."
            (cl-loop for q across quiz-questions
                     sum (if (string=
                              (alist-get 'correct_answer q)
