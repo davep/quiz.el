@@ -202,10 +202,16 @@ Questions will be at most as hard as DIFFICULTY."
                           0))
            (length quiz-questions)))
 
+(defun quiz-reload ()
+  "Load a new quiz with the current settings."
+  (interactive)
+  (quiz (length quiz-questions) quiz-category quiz-difficulty))
+
 (defvar quiz-mode-map
   (let ((map widget-keymap))
     (suppress-keymap map t)
     (define-key map " " #'quiz-check-answers)
+    (define-key map "r" #'quiz-reload)
     map)
   "Local keymap for `quiz'.")
 
