@@ -231,7 +231,7 @@ Questions will be at most as hard as DIFFICULTY."
   (interactive
    (list
     (read-number "Questions: " 10)
-    (completing-read "Category: (default any)" (quiz-get-category-names) nil t)
+    (completing-read "Category (default any): " (quiz-get-category-names) nil t)
     (completing-read
      (format "Difficulty (default %s): " (car quiz-difficulty-levels))
      quiz-difficulty-levels nil t nil nil (car quiz-difficulty-levels))))
