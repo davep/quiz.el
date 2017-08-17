@@ -209,17 +209,32 @@ Questions will be at most as hard as DIFFICULTY."
     map)
   "Local keymap for `quiz'.")
 
+(defun quiz-mode-header-line ()
+  "Return the header line for a `quiz-mode' buffer."
+  '(:eval
+    (format " Quiz | Questions: %d | Category: %s | Difficulty: %s"
+            (length quiz-questions)
+            (if (string-empty-p quiz-category) "Any" quiz-category)
+            (capitalize quiz-difficulty))))
+
 (define-derived-mode quiz-mode special-mode "Quiz"
   "Major mode for playing `quiz'.
 
 The key bindings for `quiz-mode' are:
 
 \\{quiz-mode-map}"
-  (setq truncate-lines nil)
+  (setq truncate-lines     nil
+        header-line-format (quiz-mode-header-line))
   (buffer-disable-undo))
 
 (defvar-local quiz-questions nil
   "Holds the questions for the current quiz.")
+
+(defvar-local quiz-category nil
+  "Holds the category for the current set of questions.")
+
+(defvar-local quiz-difficulty nil
+  "Holds the difficulty for the current set of questions.")
 
 ;;;###autoload
 (defun quiz (count category difficulty)
@@ -242,6 +257,8 @@ Questions will be at most as hard as DIFFICULTY."
     (let ((buffer (get-buffer-create quiz-buffer-name)))
       (with-current-buffer buffer
         (quiz-mode)
+        (setq quiz-category   category
+              quiz-difficulty difficulty)
         (let ((buffer-read-only nil))
           (setf (buffer-string) "")
           (save-excursion
