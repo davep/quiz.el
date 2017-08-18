@@ -151,13 +151,13 @@ DIFFICULTY can be used top optionally set the difficulty of the questions."
            :notify (lambda (widget &rest _)
                      (setf (alist-get 'given_answer (aref questions i))
                            (base64-encode-string (widget-value widget))))
-           (cl-loop for answer in
-                    (sort
-                     (append (list (quiz-decode (alist-get 'correct_answer q)))
-                             (cl-loop for wrong across (alist-get 'incorrect_answers q)
-                                      collect (quiz-decode wrong)))
-                     #'string<)
-                    collect (list 'item answer)))))
+           (mapcar (lambda (answer)
+                     (list 'item answer))
+                   (sort
+                    (mapcar #'quiz-decode
+                            (append (alist-get 'incorrect_answers q)
+                                    (list (alist-get 'correct_answer q))))
+                    #'string<)))))
 
 (defun quiz-insert-question (questions i)
   "From QUESTIONS insert QUESTION I."
