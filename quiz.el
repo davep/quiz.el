@@ -95,9 +95,9 @@ Never access this directly, always call `quiz-get-categories' instead.")
 
 (defun quiz-get-category-names ()
   "Return a list of category names."
-  (sort
-   (cl-loop for cat being the hash-key of (quiz-get-categories) collect cat)
-   #'string<))
+  (cl-loop for cat being the hash-key of (quiz-get-categories)
+           collect cat into categories
+           finally return (sort categories #'string<)))
 
 (defun quiz-lispify-questions (json-questions)
   "Turn JSON-QUESTIONS into a list."
