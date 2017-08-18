@@ -195,11 +195,10 @@ Questions will be at most as hard as DIFFICULTY."
   (interactive)
   (message "%d out of %d questions answered correctly."
            (cl-loop for q across quiz-questions
-                    sum (if (string=
-                             (alist-get 'correct_answer q)
-                             (alist-get 'given_answer q ""))
-                            1
-                          0))
+                    if (string=
+                        (alist-get 'correct_answer q)
+                        (alist-get 'given_answer q ""))
+                    sum 1)
            (length quiz-questions)))
 
 (defun quiz-reload ()
