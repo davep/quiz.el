@@ -83,10 +83,10 @@ Never access this directly, always call `quiz-get-categories' instead.")
 
 (defun quiz-lispify-categories (json-categories)
   "Turn JSON-CATEGORIES into a list."
-  (let ((categories (make-hash-table :test #'equal)))
-    (cl-loop for cat across (alist-get 'trivia_categories (json-read-from-string json-categories))
-             do (puthash (alist-get 'name cat) (alist-get 'id cat) categories)
-             finally return categories)))
+  (cl-loop with categories = (make-hash-table :test #'equal)
+           for cat across (alist-get 'trivia_categories (json-read-from-string json-categories))
+           do (puthash (alist-get 'name cat) (alist-get 'id cat) categories)
+           finally return categories))
 
 (defun quiz-get-categories ()
   "Return the list of quiz categories."
