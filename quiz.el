@@ -65,6 +65,20 @@
 (defconst quiz-buffer-name "*Quiz*"
   "Name of the quiz buffer.")
 
+(defvar quiz-categories nil
+  "Holds the list of quiz categories once they've been loaded.
+
+Never access this directly, always call `quiz-get-categories' instead.")
+
+(defvar-local quiz-questions nil
+  "Holds the questions for the current quiz.")
+
+(defvar-local quiz-category nil
+  "Holds the category for the current set of questions.")
+
+(defvar-local quiz-difficulty nil
+  "Holds the difficulty for the current set of questions.")
+
 (defun quiz-get (url)
   "Get quiz data from URL."
   (let* ((url-request-extra-headers `(("User-Agent" . ,quiz-user-agent)))
@@ -75,11 +89,6 @@
         (setf (point) (point-min))
         (when (search-forward-regexp "^$" nil t)
           (buffer-substring (1+ (point)) (point-max)))))))
-
-(defvar quiz-categories nil
-  "Holds the list of quiz categories once they've been loaded.
-
-Never access this directly, always call `quiz-get-categories' instead.")
 
 (defun quiz-lispify-categories (json-categories)
   "Turn JSON-CATEGORIES into a list."
@@ -231,15 +240,6 @@ The key bindings for `quiz-mode' are:
   (setq truncate-lines     nil
         header-line-format (quiz-mode-header-line))
   (buffer-disable-undo))
-
-(defvar-local quiz-questions nil
-  "Holds the questions for the current quiz.")
-
-(defvar-local quiz-category nil
-  "Holds the category for the current set of questions.")
-
-(defvar-local quiz-difficulty nil
-  "Holds the difficulty for the current set of questions.")
 
 ;;;###autoload
 (defun quiz (count category difficulty)
