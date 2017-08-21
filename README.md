@@ -1,3 +1,6 @@
+[![MELPA Stable](https://stable.melpa.org/packages/quiz-badge.svg)](https://stable.melpa.org/#/quiz)
+[![MELPA](https://melpa.org/packages/quiz-badge.svg)](https://melpa.org/#/quiz)
+
 # quiz.el
 
 A simple trivia quiz game that uses [The Open Trivia
