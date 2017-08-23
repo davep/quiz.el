@@ -17,6 +17,8 @@ buffer of questions with multiple-choice answers will be displayed. Answer
 the questions by checking your choice of answer and hit <kbd>Space</kbd> at
 any time to check your progress.
 
+![M-x quiz RET](quiz.png)
+
 ## Todo:
 
 - [X] Implement categories.
