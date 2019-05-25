@@ -215,7 +215,8 @@ Questions will be at most as hard as DIFFICULTY."
   (quiz (length quiz-questions) quiz-category quiz-difficulty))
 
 (defvar quiz-mode-map
-  (let ((map widget-keymap))
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map widget-keymap)
     (suppress-keymap map t)
     (define-key map " " #'quiz-check-answers)
     (define-key map "r" #'quiz-reload)
