@@ -265,7 +265,7 @@ Questions will be at most as hard as DIFFICULTY."
         (setq quiz-category   category
               quiz-difficulty difficulty)
         (let ((buffer-read-only nil))
-          (setf (buffer-string) "")
+          (erase-buffer)
           (save-excursion
             (setq quiz-questions (quiz-insert-questions count category difficulty))
             (quiz-insert-finish))
