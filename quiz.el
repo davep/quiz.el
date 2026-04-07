@@ -85,7 +85,7 @@ Never access this directly, always call `quiz-get-categories' instead.")
     (when buffer
       (with-current-buffer buffer
         (set-buffer-multibyte t)
-        (setf (point) (point-min))
+        (goto-char (point-min))
         (when (search-forward-regexp "^$" nil t)
           (buffer-substring (1+ (point)) (point-max)))))))
 
