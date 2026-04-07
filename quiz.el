@@ -1,8 +1,8 @@
 ;;; quiz.el --- Multiple choice quiz game -*- lexical-binding: t -*-
-;; Copyright 2017 by Dave Pearson <davep@davep.org>
+;; Copyright 2017-2026 by Dave Pearson <davep@davep.org>
 
 ;; Author: Dave Pearson <davep@davep.org>
-;; Version: 1.5
+;; Version: 1.6
 ;; Keywords: games, trivia, quiz
 ;; URL: https://github.com/davep/quiz.el
 ;; Package-Requires: ((emacs "25.1"))
