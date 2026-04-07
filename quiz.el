@@ -5,7 +5,7 @@
 ;; Version: 1.5
 ;; Keywords: games, trivia, quiz
 ;; URL: https://github.com/davep/quiz.el
-;; Package-Requires: ((cl-lib "0.5") (emacs "25"))
+;; Package-Requires: ((emacs "25.1"))
 
 ;; This program is free software: you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by the
@@ -85,7 +85,7 @@ Never access this directly, always call `quiz-get-categories' instead.")
     (when buffer
       (with-current-buffer buffer
         (set-buffer-multibyte t)
-        (setf (point) (point-min))
+        (goto-char (point-min))
         (when (search-forward-regexp "^$" nil t)
           (buffer-substring (1+ (point)) (point-max)))))))
 
@@ -220,6 +220,7 @@ Questions will be at most as hard as DIFFICULTY."
     (suppress-keymap map t)
     (define-key map " " #'quiz-check-answers)
     (define-key map "r" #'quiz-reload)
+    (define-key map "q" #'quit-window)
     map)
   "Local keymap for `quiz'.")
 
@@ -265,7 +266,7 @@ Questions will be at most as hard as DIFFICULTY."
         (setq quiz-category   category
               quiz-difficulty difficulty)
         (let ((buffer-read-only nil))
-          (setf (buffer-string) "")
+          (erase-buffer)
           (save-excursion
             (setq quiz-questions (quiz-insert-questions count category difficulty))
             (quiz-insert-finish))
