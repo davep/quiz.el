@@ -220,6 +220,7 @@ Questions will be at most as hard as DIFFICULTY."
     (suppress-keymap map t)
     (define-key map " " #'quiz-check-answers)
     (define-key map "r" #'quiz-reload)
+    (define-key map "q" #'quit-window)
     map)
   "Local keymap for `quiz'.")
 
