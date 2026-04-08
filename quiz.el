@@ -35,7 +35,8 @@
 
 (defgroup quiz nil
   "Trivia quiz game using Open Trivia DB as the back end."
-  :group 'games)
+  :group 'games
+  :prefix "quiz-")
 
 (defface quiz-question-number-face
   '((t :height 1.3
