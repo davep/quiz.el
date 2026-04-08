@@ -40,7 +40,8 @@
 (defface quiz-question-number-face
   '((t :height 1.3
        :background "black"
-       :foreground "white"))
+       :foreground "white"
+       :extend t))
   "Face for the question number."
   :group 'quiz)
 
